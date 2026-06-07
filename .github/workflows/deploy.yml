@@ -1,4 +1,4 @@
-name: Deploy Website to S3 and CloudFront
+name: Deploy Website to S3
 
 on:
 push:
@@ -9,9 +9,9 @@ jobs:
 deploy:
 runs-on: ubuntu-latest
 
-```
+
 steps:
-  - name: Checkout Repository
+  - name: Checkout Code
     uses: actions/checkout@v4
 
   - name: Configure AWS Credentials
@@ -19,25 +19,8 @@ steps:
     with:
       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      aws-region: ${{ secrets.AWS_REGION }}
+      aws-region: ap-south-1
 
-  - name: Verify AWS Identity
-    run: aws sts get-caller-identity
+  - name: Deploy to S3
+    run: aws s3 sync . s3://YOUR-BUCKET-NAME --delete
 
-  - name: Deploy Website to S3
-    run: |
-      aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }} \
-      --delete \
-      --exclude ".git/*" \
-      --exclude ".github/*" \
-      --exclude "*.md"
-
-  - name: Invalidate CloudFront Cache
-    run: |
-      aws cloudfront create-invalidation \
-        --distribution-id ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }} \
-        --paths "/*"
-
-  - name: Deployment Complete
-    run: echo "Website deployed successfully!"
-```
