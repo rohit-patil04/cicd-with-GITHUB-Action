@@ -9,7 +9,7 @@ jobs:
 deploy:
 runs-on: ubuntu-latest
 
-```
+
 steps:
   - uses: actions/checkout@v4
 
@@ -20,4 +20,4 @@ steps:
       aws-region: ap-south-1
 
   - run: aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }} --delete
-```
+
