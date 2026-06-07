@@ -20,9 +20,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Deploy Files to S3
+      - name: Verify AWS Identity
+        run: aws sts get-caller-identity
+
+      - name: Deploy Website to S3
         run: |
           aws s3 sync . s3://${{ secrets.S3_BUCKET_NAME }} \
           --delete \
           --exclude ".git/*" \
-          --exclude ".github/*"
+          --exclude ".github/*" \
+          --exclude "*.md"
+
+      - name: Deployment Complete
+        run: echo "Website deployed successfully!"
